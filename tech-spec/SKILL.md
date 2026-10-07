@@ -39,6 +39,7 @@ Assume the reader is smart but tired.
    - **Code changes, in order.** This is the part reviewers use most:
      - Open with two to four everyday paragraphs: what the thing is (anchor picture), what goes wrong today, the one idea the plan repeats, and how the steps build on each other.
      - Then a `.timeline` of `.tstep` blocks, one per step. Each has a `.when` tag that says where you are ("start here", "the main fix", "same idea, next job", "after the product answer"), a plain title, and why this step comes now and what it sets up later. Write a lead-in sentence before every code block. End each step with a `.handoff` line saying what's now true and what the next step tackles.
+     - After each step's first paragraph, add one `.ctxline`: the call chain in arrows from the real trigger to the edit ("daily cron → `autoSettlement` → your edit") and who uses the result. Keep it under ~35 words.
      - Code blocks show only the lines that change, with a `.codecap` file path (and line numbers when known). Mark changes inline: `// ← new`, `// ← was …`. Mark proposed code as a sketch when it isn't drop-in.
      - Order steps by dependency and risk: reliable foundations first, the main fix next, shared or risky code after the targeted fixes, decisions waiting on product last.
      - Call out ship-order hazards in the step itself, for example "don't ship this without step 4", when one change is unsafe without another.
@@ -52,7 +53,14 @@ Assume the reader is smart but tired.
 
 9. **Two-minute refresher:** concept blocks (What / Everyday / Where / Why) for each idea the task needs.
 10. **What the task wants, and why it matters:** a plain restatement, and who is hurt today.
-11. **What you'll do, step by step:** per step, a heading with its files, an `.aside` with the plain why, then "Before · file:line" code, "After (sketch)" code and a `.fixes` line. This section is the detailed companion to Part 1's timeline, so keep the two in step.
+11. **What you'll do, step by step:** per step, a heading with its files, an `.aside` with the plain why, a `.ctx` context box (below), then "Before · file:line" code, "After (sketch)" code and a `.fixes` line. This section is the detailed companion to Part 1's timeline, so keep the two in step.
+    **The context box** answers the questions readers actually ask about an edit: where a value comes from, what an object holds, who calls this code and who uses its result. Readers need that to understand a change rather than copy it. Build it from the code, citing file:line for every fact:
+    - **How you get here:** the call chain from the real trigger (route, webhook, cron job, queue consumer, admin action) to the function you edit, plus one everyday sentence on what triggers it.
+    - **What you already have:** the variables in scope that the change uses, what each holds, where it was read or built, and any surprises (read before several awaits; one partition rather than the whole wallet; a copy the caller may have changed). Add a 3–8 line real-code excerpt only if a line is confusing on its own.
+    - **What happens next:** who receives the return value or reads what you wrote, and what they do with it today. Flag callers that ignore the result.
+    - **Watch out for** (optional): real gotchas only, such as another caller of the same function or a shared helper other flows use.
+
+    Writing "What happens next" means checking callers, and that often turns up gaps in the plan itself (for example, a caller that ignores a new `stale` result and still logs a retry). Fix the step and say so; don't bury it in the box. Skip the call chain when the edit is self-contained. Don't paste whole surrounding functions.
 12. **How you'll know you're done:** a checklist of observable results.
 
 ## 5. Wrap-up
