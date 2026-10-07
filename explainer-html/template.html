@@ -1,0 +1,341 @@
+<title>REPLACE: Two-to-Four Word Name</title>
+<meta name="description" content="REPLACE: one sentence on what this page explains and for whom.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<!-- add more hljs languages as needed: bash, sql, lua, http, go, python ... (same version) -->
+<style>
+/* one 75ch reading column, page-1 light/dark palette, no bold; concept blocks, race strips and a cron timeline */
+:root {
+  --bg: #fbfbfa;
+  --fg: #1d2329;
+  --muted: #5d6873;
+  --rule: #e2e5e8;
+  --soft: #f1f3f4;
+  --accent: #2b5d83;
+  --accent-soft: #e6eef5;
+  --note: #f6f1e4;
+  --note-ink: #6b5420;
+  --concept: #f2eef8;
+  --concept-ink: #5b3f8a;
+  --concept-rule: #e0d8ee;
+  --warn: #9a3a2a;
+  --warn-soft: #f8e9e6;
+  --ok: #2c7a43;
+  --code-bg: #f3f5f7;
+  --code-ink: #232a30;
+  --code-border: #e3e7eb;
+  --syn-keyword: #8a3fa0;
+  --syn-string: #2c7a43;
+  --syn-number: #b0571a;
+  --syn-comment: #6f7a84;
+  --syn-title: #1f5f9e;
+  --syn-type: #a2601a;
+  --syn-attr: #9a3a3a;
+  --syn-meta: #5a6670;
+  --font: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15191d; --fg: #dde2e7; --muted: #98a2ac; --rule: #2b3238; --soft: #1c2126;
+    --accent: #86b7dd; --accent-soft: #1d2a35; --note: #2a2518; --note-ink: #d9c28a;
+    --concept: #221d2c; --concept-ink: #c4a8ec; --concept-rule: #352d44;
+    --warn: #f09a8a; --warn-soft: #2e1f1c; --ok: #8fd19e;
+    --code-bg: #1b2025; --code-ink: #d6dce2; --code-border: #2a3138;
+    --syn-keyword: #d3a2e3; --syn-string: #8fd19e; --syn-number: #f0a56b; --syn-comment: #8a96a1;
+    --syn-title: #8cc0f0; --syn-type: #e7c07a; --syn-attr: #f09a9a; --syn-meta: #9aa6b1;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15191d; --fg: #dde2e7; --muted: #98a2ac; --rule: #2b3238; --soft: #1c2126;
+  --accent: #86b7dd; --accent-soft: #1d2a35; --note: #2a2518; --note-ink: #d9c28a;
+  --concept: #221d2c; --concept-ink: #c4a8ec; --concept-rule: #352d44;
+  --warn: #f09a8a; --warn-soft: #2e1f1c; --ok: #8fd19e;
+  --code-bg: #1b2025; --code-ink: #d6dce2; --code-border: #2a3138;
+  --syn-keyword: #d3a2e3; --syn-string: #8fd19e; --syn-number: #f0a56b; --syn-comment: #8a96a1;
+  --syn-title: #8cc0f0; --syn-type: #e7c07a; --syn-attr: #f09a9a; --syn-meta: #9aa6b1;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.65;
+  margin: 0;
+  padding-inline: 16px;
+  padding-block: 48px 96px;
+  -webkit-font-smoothing: antialiased;
+}
+b, strong, th { font-weight: 400; }
+main { max-width: 75ch; margin: 0 auto; display: flex; flex-direction: column; }
+h1 { font-size: 26px; font-weight: 500; line-height: 1.25; margin: 0 0 8px; text-wrap: balance; letter-spacing: -0.01em; }
+h2 { font-size: 17px; font-weight: 500; margin: 56px 0 4px; text-wrap: balance; line-height: 1.35; }
+h3 { font-size: 17px; font-weight: 500; margin: 36px 0 4px; text-wrap: balance; line-height: 1.35; }
+h4 { font-size: 15px; font-weight: 500; margin: 24px 0 0; }
+p, ul, ol { margin: 12px 0 0; }
+ul, ol { padding-left: 1.3em; }
+li + li { margin-top: 6px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.lede { color: var(--muted); margin-top: 4px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.part { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--concept-ink); margin: 72px 0 0; padding-top: 18px; border-top: 1px solid var(--rule); }
+.part + h2 { margin-top: 10px; }
+.secnum { font-family: var(--mono); font-size: 13px; color: var(--accent); margin-right: 10px; font-weight: 400; }
+.files { font-family: var(--mono); font-size: 12.5px; color: var(--muted); margin-top: 10px; line-height: 1.6; overflow-wrap: anywhere; }
+.files::before { content: "Files  "; color: var(--accent); }
+.term { color: var(--accent); }
+.em { color: var(--warn); }
+
+code { font-family: var(--mono); font-size: 0.88em; background: var(--soft); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+pre { margin: 14px 0 0; background: var(--code-bg); border: 1px solid var(--code-border); border-radius: 8px; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+pre code { display: block; padding: 14px 16px; background: none; color: var(--code-ink); font-size: 13px; overflow-wrap: normal; white-space: pre; }
+.codecap { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 18px 0 -8px; overflow-wrap: anywhere; }
+.hljs-keyword, .hljs-built_in, .hljs-literal { color: var(--syn-keyword); }
+.hljs-string, .hljs-regexp, .hljs-template-variable { color: var(--syn-string); }
+.hljs-number { color: var(--syn-number); }
+.hljs-comment, .hljs-quote { color: var(--syn-comment); font-style: italic; }
+.hljs-title, .hljs-title.function_, .hljs-section { color: var(--syn-title); }
+.hljs-type, .hljs-title.class_, .hljs-class .hljs-title { color: var(--syn-type); }
+.hljs-attr, .hljs-attribute, .hljs-property, .hljs-variable { color: var(--syn-attr); }
+.hljs-meta, .hljs-symbol, .hljs-params, .hljs-subst { color: var(--syn-meta); }
+
+.toc { margin-top: 28px; padding: 16px 18px; border: 1px solid var(--rule); border-radius: 8px; }
+.toc p { margin: 0 0 6px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.toc p.tocpart { margin-top: 12px; color: var(--concept-ink); }
+.toc ol { margin: 0; padding-left: 1.6em; }
+.toc li + li { margin-top: 3px; }
+
+.aside { margin-top: 16px; padding: 12px 16px; border-left: 2px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; }
+.aside p:first-child { margin-top: 0; }
+.aside.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+
+.concept { margin-top: 18px; padding: 14px 16px 16px; background: var(--concept); border: 1px solid var(--concept-rule); border-radius: 10px; }
+.concept .ctag { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--concept-ink); margin: 0; }
+.concept .cname { font-size: 15px; font-weight: 500; margin: 2px 0 0; }
+.concept dl { display: grid; grid-template-columns: minmax(0, 6.5em) minmax(0, 1fr); gap: 0; margin: 10px 0 0; }
+.concept dt { font-family: var(--mono); font-size: 12px; color: var(--concept-ink); padding: 7px 10px 7px 0; border-top: 1px solid var(--concept-rule); }
+.concept dd { margin: 0; padding: 6px 0; border-top: 1px solid var(--concept-rule); min-width: 0; }
+@media (max-width: 560px) {
+  .concept dl { grid-template-columns: 1fr; }
+  .concept dt { padding-bottom: 0; }
+  .concept dd { border-top: 0; padding-top: 2px; }
+}
+
+.tablewrap { overflow-x: auto; margin-top: 14px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th { text-align: left; color: var(--muted); font-size: 12.5px; border-bottom: 1px solid var(--rule); padding: 6px 10px 6px 0; }
+td { border-bottom: 1px solid var(--rule); padding: 8px 10px 8px 0; vertical-align: top; }
+td.mono { font-family: var(--mono); font-size: 12.5px; overflow-wrap: anywhere; }
+td.num { font-family: var(--mono); font-size: 13px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pill { display: inline-block; font-family: var(--mono); font-size: 11.5px; padding: 1px 7px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.pill.yes { color: var(--ok); }
+.pill.no { color: var(--warn); }
+.pill.part { color: var(--note-ink); }
+
+/* race strips: who does what, second by second */
+.race { margin-top: 14px; overflow-x: auto; }
+.race table { font-size: 13.5px; min-width: 520px; }
+.race td:first-child { font-family: var(--mono); font-size: 12.5px; color: var(--muted); white-space: nowrap; width: 4.5em; }
+.race td.db { font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
+.race td.bad { color: var(--warn); }
+
+.label { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 18px 0 -8px; }
+.label.after { color: var(--accent); }
+.fixes { margin-top: 10px; }
+.fixes::before { content: "What it fixes  "; font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+
+.figure { margin-top: 16px; border: 1px solid var(--rule); border-radius: 8px; padding: 12px; overflow-x: auto; }
+.figure svg { display: block; width: 100%; min-width: 560px; height: auto; }
+.figcap { font-size: 13px; color: var(--muted); margin-top: 8px; }
+.svg-label { fill: var(--fg); font-family: var(--mono); font-size: 11px; }
+.svg-muted { fill: var(--muted); font-family: var(--mono); font-size: 10px; }
+.svg-rule { stroke: var(--rule); }
+.svg-hot { fill: var(--warn-soft); }
+.svg-dot { fill: var(--accent); }
+.svg-dot-warn { fill: var(--warn); }
+
+.checklist { list-style: none; padding: 0; }
+.checklist li { padding-left: 1.6em; position: relative; }
+.checklist li::before { content: "□"; position: absolute; left: 0; color: var(--accent); font-family: var(--mono); }
+
+.tip { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.tip h3 { margin-top: 0; }
+.tip .meta { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
+
+.quiz { display: flex; flex-direction: column; gap: 26px; margin-top: 20px; }
+.q { border-top: 1px solid var(--rule); padding-top: 14px; min-width: 0; }
+.q > p:first-of-type { margin-top: 0; }
+.qn { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--concept-ink); }
+.opts { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.opt { text-align: left; font: inherit; font-size: 14px; color: var(--fg); background: var(--soft); border: 1px solid var(--rule); border-radius: 8px; padding: 9px 12px; cursor: pointer; overflow-wrap: anywhere; }
+.opt:hover { border-color: var(--muted); }
+.opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.opt code { background: none; padding: 0; }
+.opt.right { border-color: var(--ok); color: var(--ok); }
+.opt.wrong { border-color: var(--warn); color: var(--warn); }
+.opt.right::after { content: "  ✓ correct"; font-family: var(--mono); font-size: 12px; }
+.opt.wrong::after { content: "  ✗ not this one"; font-family: var(--mono); font-size: 12px; }
+.why { color: var(--muted); }
+.ans { margin-top: 12px; }
+.ans summary { cursor: pointer; font-family: var(--mono); font-size: 12.5px; color: var(--accent); }
+.ans summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+
+.gloss { margin-top: 16px; display: grid; grid-template-columns: minmax(0, 12em) minmax(0, 1fr); gap: 0; }
+.gloss dt { padding: 9px 12px 9px 0; border-top: 1px solid var(--rule); overflow-wrap: anywhere; }
+.gloss dd { margin: 0; padding: 9px 0; border-top: 1px solid var(--rule); min-width: 0; }
+.glossgroup { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin: 28px 0 0; }
+@media (max-width: 560px) {
+  .gloss { grid-template-columns: 1fr; }
+  .gloss dt { padding-bottom: 0; }
+  .gloss dd { border-top: 0; padding-top: 2px; }
+}
+</style>
+
+<main>
+<p class="eyebrow">REPLACE: project · scope · branch/ticket</p>
+<h1>REPLACE: Title</h1>
+<p class="lede">REPLACE: who this is for, what they'll understand after reading, and that code is quoted from the repo with explanatory comments added.</p>
+
+<nav class="toc" aria-label="Contents">
+<p>Contents</p>
+<p class="tocpart">Part 1 · Foundations</p>
+<ol>
+<li><a href="#s1">Section</a></li>
+</ol>
+<p class="tocpart">Wrap-up</p>
+<ol start="2">
+<li><a href="#worth-knowing">Data stores and tools worth knowing</a></li>
+<li><a href="#tips">Senior engineer tips</a></li>
+<li><a href="#practice">Practice</a></li>
+<li><a href="#glossary">Glossary</a></li>
+</ol>
+</nav>
+
+<p class="part">Part 1 · Foundations</p>
+<h2 id="s1"><span class="secnum">1</span>Section title</h2>
+<p>Define each <span class="term">term</span> in plain words the first time it appears.</p>
+
+<!-- CODE: analogy lives in comments on the exact lines it explains -->
+<p class="codecap">path/to/file.ts:42</p>
+<pre><code class="language-typescript">const x = await Model.findOneAndUpdate(
+  { _id, status: 'pending' },   // only if it's still pending, like "reserve 14C if still free"
+  { $set: { status: 'done' } },
+);</code></pre>
+
+<!-- CONCEPT BLOCK: use generously, one per named concept -->
+<div class="concept">
+<p class="ctag">Concept</p>
+<p class="cname">Concept name</p>
+<dl>
+<dt>What</dt><dd>Plain definition.</dd>
+<dt>Everyday</dt><dd>Concrete real-life analogy.</dd>
+<dt>Where</dt><dd><code>path/in/repo.ts</code></dd>
+<dt>When</dt><dd>When you'd choose it over the alternative.</dd>
+</dl>
+</div>
+
+<!-- ASIDES -->
+<div class="aside"><p>Neutral note or decision to make.</p></div>
+<div class="aside warn"><p>Surprising finding or danger.</p></div>
+
+<!-- STATUS TABLE with pills -->
+<div class="tablewrap"><table>
+<thead><tr><th>Path</th><th>Status</th><th>Note</th></tr></thead>
+<tbody>
+<tr><td>Thing</td><td><span class="pill yes">yes</span></td><td class="mono">file.ts:10</td></tr>
+<tr><td>Thing</td><td><span class="pill part">partial</span></td><td>note</td></tr>
+<tr><td>Thing</td><td><span class="pill no">no</span></td><td>note</td></tr>
+</tbody></table></div>
+
+<!-- RACE / SEQUENCE STRIP: step-by-step timeline of two actors -->
+<div class="race"><table>
+<thead><tr><th>Time</th><th>Actor A</th><th>Actor B</th><th>State in DB</th></tr></thead>
+<tbody>
+<tr><td>10:00:00.0</td><td>reads row</td><td></td><td class="db">pending</td></tr>
+<tr><td>10:00:00.1</td><td></td><td>overwrites row</td><td class="db bad">initiated</td></tr>
+</tbody></table></div>
+
+<!-- FIX: before → after → what it fixes -->
+<p class="label">Before · file.ts:83</p>
+<pre><code class="language-typescript">old code</code></pre>
+<p class="label after">After</p>
+<pre><code class="language-typescript">new code   // comment on the line that changed</code></pre>
+<p class="fixes">Plain-words effect of the change.</p>
+
+<!-- CHECKLIST for "what the task asks for" -->
+<ul class="checklist"><li>Concrete deliverable.</li></ul>
+
+<!-- SVG FIGURE: colours only via classes/tokens -->
+<div class="figure">
+<svg viewBox="0 0 720 120" role="img" aria-label="Describe the figure">
+  <text x="8" y="40" class="svg-label">label</text>
+  <circle cx="200" cy="36" r="4" class="svg-dot"></circle>
+</svg>
+<p class="figcap">What the figure shows.</p>
+</div>
+
+<p class="part">Wrap-up</p>
+<h2 id="worth-knowing"><span class="secnum">2</span>Data stores and tools worth knowing</h2>
+<h3>Niche command or option</h3>
+<p>What it does, where the codebase uses it (path), why over the obvious alternative.</p>
+
+<h2 id="tips"><span class="secnum">3</span>Senior engineer tips</h2>
+<div class="tip">
+<h3>Practice name</h3>
+<p class="meta">applies to: path/to/file.ts</p>
+<p>When it applies, when it doesn't, the trade-off.</p>
+</div>
+
+<h2 id="practice"><span class="secnum">4</span>Practice</h2>
+<div class="quiz">
+<section class="q" data-answer="b">
+<p class="qn">Q1 · multiple choice</p>
+<p>Question grounded in the page's real code.</p>
+<div class="opts">
+<button type="button" class="opt" data-k="a">Option</button>
+<button type="button" class="opt" data-k="b">Correct option</button>
+<button type="button" class="opt" data-k="c">Option</button>
+</div>
+<p class="why" hidden>One-line why.</p>
+</section>
+<section class="q">
+<p class="qn">Q2 · spot the problem</p>
+<pre><code class="language-typescript">code with a planted issue</code></pre>
+<details class="ans"><summary>Show answer</summary><p>Answer.</p></details>
+</section>
+</div>
+
+<h2 id="glossary"><span class="secnum">5</span>Glossary</h2>
+<p class="glossgroup">Group</p>
+<dl class="gloss">
+<dt>Term</dt><dd>Plain definition.</dd>
+</dl>
+</main>
+
+<script>
+(function () {
+  try { hljs.highlightAll(); } catch (e) { /* code still reads fine unhighlighted */ }
+  document.querySelectorAll('.q[data-answer]').forEach(function (question) {
+    var answer = question.getAttribute('data-answer');
+    var why = question.querySelector('.why');
+    question.querySelectorAll('.opt').forEach(function (option) {
+      option.addEventListener('click', function () {
+        var isRight = option.getAttribute('data-k') === answer;
+        option.classList.remove('right', 'wrong');
+        option.classList.add(isRight ? 'right' : 'wrong');
+        if (isRight && why) why.hidden = false;
+      });
+    });
+  });
+})();
+</script>
