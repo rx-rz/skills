@@ -1,87 +1,109 @@
 ---
 name: tech-spec
-description: Write a tech spec plus step-by-step implementation plan for an incoming task, as a single HTML page grounded in the real code, then publish it. Part 1 is a short, glanceable spec scoped strictly to the ticket (overview, goals, data model, numbered plan with one marked-up code block per function, then small tables for testing, rollback, open questions, follow-ups, alternatives). Part 2 explains the task in plain words. Use when the user asks for a "tech spec", "spec", "design doc", "implementation plan", "RFC" or "plan for this ticket", or wants code steps to review before coding. Written for a tired reader: plain English, every claim tied to a line of code, anchor analogies.
+description: Write a tech spec plus step-by-step implementation plan for an incoming task, as a single HTML page grounded in the real code, then publish it. Part 1 is a short spec scoped strictly to the ticket, told in plain prose with one marked-up code block and a diagram per step. Part 2 walks through the same task Feynman-style, smallest idea first, with a picture for every flow, race and before/after. Use when the user asks for a "tech spec", "spec", "design doc", "implementation plan", "RFC" or "plan for this ticket", or wants code steps to review before coding. Same look and voice as explainer-html: prose over tables, funny and plain, every claim tied to a line of code.
 ---
 
 # Tech spec
 
-A single-file HTML page that gets a task from "ticket" to "ready to code and review". Part 1 is the spec a reviewer reads. Part 2 is the same plan in plain words for the person doing the work. Start from `template.html` in this folder. It uses the same look as the `explainer-html` skill.
+A single-file HTML page that gets a task from "ticket" to "ready to code and review". It is the `explainer-html` skill pointed at one ticket: same fonts, same palette, same voice, same habit of drawing instead of describing. The difference is scope and length. An explainer teaches a whole system; a spec teaches exactly the change the ticket asks for, and stops.
 
-If the `explainer-html` skill is available, follow its research rules, teaching rules and plain-English voice (sections 1–3). This skill only adds what's specific to specs. If it isn't available, the essentials are repeated below.
+Part 1 is the spec a reviewer reads in five minutes. Part 2 is the same plan explained properly, for the person doing the work. Start from `template.html` in this folder; it holds the stylesheet, fonts, figure classes and every component.
+
+If `explainer-html` is available, read its sections 3 to 5 (how to teach, diagrams, voice) before writing. This file repeats what matters for specs and adds what's specific to them.
 
 ## 1. Research before writing
 
 - Read the code the ticket touches, plus every caller of anything you plan to change. For broad tasks, fan out to subagents (one per area) and ask for file:line refs and short verbatim excerpts.
-- Map the blast radius: every place that reads or writes the thing you're changing. Use it to decide scope; what the ticket does not ask for goes in Follow-ups.
-- Verify each claim in the ticket against the code: confirmed / partly / not confirmed.
-- Find existing helpers before proposing new ones, and name them in Dependencies with file:line.
-- Note problems found along the way under Follow-ups, separate from the task's scope.
-- Anything you can't confirm goes under Open questions as "check this before coding", with the file:line that raised the doubt. Never present a guess as fact.
+- Map the blast radius: every place that reads or writes the thing you're changing. Use it to decide scope. Whatever the ticket doesn't ask for goes in "Left out on purpose".
+- Check each claim in the ticket against the code. The verdicts go into the prose ("the ticket says the job retries forever; it retries three times, `jobs/sync.ts:88`").
+- Find existing helpers before proposing new ones, and name them where the plan uses them.
+- Anything you can't confirm goes under "Questions to settle before coding", with the file:line that raised the doubt. Never present a guess as fact.
+- Make a figure list while you plan: one picture per step at minimum (section 4).
 
-## 2. Voice
+## 2. Voice and teaching
 
-Assume the reader is smart but tired.
+Same rules as `explainer-html`. The ones that bite hardest in specs:
 
-- Short sentences, one idea each, "you". Say what code does before naming it.
-- **Name every actor concretely.** Never write "the worker", "the consumer", "the job" or "the caller" on its own. The first time an actor appears in each section, say what it physically is: the process it runs in (for example a pm2 app name), the file and function, and what triggers it (queue name, cron schedule, route, webhook). When two actors clash, say they are separate programs that only share the database record.
-- Introduce one or two anchor pictures in the overview and reuse them throughout (for example: a hotel card hold for a lien; two cashiers paying the same cheque for a race).
-- **Point at the line for every claim.** Any sentence that says what code does ("the job asks for the whole balance", "the debit refuses") names the exact file:line, and quotes the key expression where it helps. This applies to the overview and refresher too, not only the code steps. Re-check line numbers just before publishing.
-- Don't thread a recurring numeric example through the page. Describe behaviour in general terms ("balance minus lien", "the free amount") and point at the line of code instead.
-- Reduce the plan to one sentence or formula and state it in the overview ("free = total − frozen"; "set it to X, but only if it's still Y").
-- Re-explain terms briefly in each major section, so readers can jump straight to a step.
-- No em-dash asides, no "not X but Y", no stock phrases.
+- Prose carries the page. Paragraphs, short and varied, talking to "you". A reviewer should be able to read Part 1 top to bottom like a short letter, not scan a grid.
+- Know the thing, then the name. "the code that takes money out of a wallet (`debitUserWallet`, `wallet/debit.ts:41`)", never the name alone.
+- Name every actor concretely. Never "the worker", "the consumer", "the job" on its own. The first time an actor appears in a section, say what it physically is: the process (pm2 app name, container), the file and function, and what sets it off (queue, cron schedule, route, webhook). When two actors clash, say they're separate programs that only share the database row.
+- Point at the line for every claim about what code does. Re-check line numbers just before publishing.
+- Start from ordinary life. Pick one or two anchor pictures in the overview (a hotel card hold for a lien, two cashiers paying the same cheque for a race) and reuse them; say where the analogy breaks.
+- Ask the reviewer's question before they do ("why not just lock the row?") and answer it right there. This replaces the old alternatives table.
+- Reduce the plan to one sentence or formula and say it early: "free = total minus frozen"; "set it to X, but only if it's still Y".
+- Funny means dry and observational, and never costs accuracy. No em or en dashes, no bold in prose, no emoji, no "let's dive in", no rule-of-three habit, no "not X, but Y", no puffed-up words. Run the `humanizer` skill's audit pass at the end if it's available.
 
-## 3. Part 1 · Tech spec
+## 3. Tables: almost never
 
-**Scope: only what the ticket asks for.** Every step in the plan must serve a line in the ticket. Anything else you find (a related bug, a nicer API field, a UX fix, a "while we're here" cleanup) goes in Follow-ups or Open questions, never in the plan. If you're unsure whether something is in scope, put it in Follow-ups and say so in chat. A good spec here is short: the user's own example had four plan steps.
+The old spec was a stack of tables. Don't do that.
 
-**Keep it simple.** Every section should read at a glance. Prefer a small table (one line per row, file:line in its own column) or two or three bullets over paragraphs. No timeline table, phases, estimates, `.when` tags, `.ctxline`, `.handoff` lines or scope-at-a-glance pill tables unless asked.
+- Testing becomes a `.checklist` of observable results, plus a sentence on which ones fail today.
+- Open questions, follow-ups and rejected alternatives become short prose or a short list, each item with its file:line.
+- Monitoring and rollback is a paragraph.
+- A table is allowed only when the content really is rows and columns and prose would be worse: a verdict per ticket claim when there are five or more, or a race strip (time | actor A | actor B | row state) for a timing bug, and even then pair the race strip with a figure. Most specs should have zero or one table.
 
-1. **Overview.** Two short paragraphs: what the feature does, and the gap in the code today with the file:line that causes it.
-2. **Goals.** Bullets, straight from the ticket.
-3. **Data model.** One line: the change, or "No change" plus the field that already exists (file:line). Add an **API changes** line only if consumers will notice something; flag anything breaking.
-4. **Implementation plan.** Numbered steps (`<h4>1. …</h4>`), one per function you edit. Split a step if it edits two functions. Each step is:
-   - one or two sentences: the function, what triggers it (process + cron/queue/route, file:line), and what changes;
-   - **one** code block of the real surrounding code, with a `.codecap` of file:lines. Show enough context to see where the edit sits (the lines that load the value, the check, the use), trim unrelated lines to `// …`, and mark every changed or added line with `// new`. No separate Before/After blocks.
-   - an optional one-line note, only for a real gotcha.
-5. **Testing.** A table: what, check, fails today? Plus a one-line bug bash recipe.
-6. **Monitoring and rollback.** Two bullets: what to watch, how to roll back.
-7. **Open questions.** A table: question, where (file:line), who decides.
-8. **Follow-ups.** A table: follow-up, where (file:line). Everything outside the ticket goes here.
-9. **Alternatives considered.** A table: option, why not (one line each).
+## 4. Diagrams
 
-## 4. Part 2 · The task in plain words
+The reader should never have to picture a flow you could have drawn. Draw:
 
-9. **Two-minute refresher:** concept blocks (What / Everyday / Where / Why) for each idea the task needs.
-10. **What the task wants, and why it matters:** a plain restatement, and who is hurt today.
-11. **What you'll do, step by step:** per step, a heading with its files, an `.aside` with the plain why, a `.ctx` context box (below), then a `.fixes` line. Don't repeat Part 1's code; group steps that share context. Keep the step numbers in step with Part 1.
-    **The context box** answers the questions readers actually ask about an edit: where a value comes from, what an object holds, who calls this code and who uses its result. Readers need that to understand a change rather than copy it. Build it from the code, citing file:line for every fact:
-    - **How you get here:** the call chain from the real trigger (route, webhook, cron job, queue consumer, admin action) to the function you edit, plus one everyday sentence on what triggers it.
-    - **What you already have:** the variables in scope that the change uses, what each holds, where it was read or built, and any surprises (read before several awaits; one partition rather than the whole wallet; a copy the caller may have changed). Add a 3–8 line real-code excerpt only if a line is confusing on its own.
-    - **What happens next:** who receives the return value or reads what you wrote, and what they do with it today. Flag callers that ignore the result.
-    - **Watch out for** (optional): real gotchas only, such as another caller of the same function or a shared helper other flows use.
+- the call chain for each step: trigger, then each function down to the one you edit, then who reads the result;
+- before and after for each behaviour change, side by side, with real values;
+- every race or ordering problem as two lanes over time, with the bad moment marked;
+- the data shape when the change touches one (a document with the field you add, a queue message, a state machine with the new transition).
 
-    Writing "What happens next" means checking callers, and that often turns up gaps in the plan itself (for example, a caller that ignores a new `stale` result and still logs a retry). Fix the step and say so; don't bury it in the box. Skip the call chain when the edit is self-contained. Don't paste whole surrounding functions.
-12. **How you'll know you're done:** a checklist of observable results.
+Aim for at least one figure per plan step, and one per Part 2 movement. Use the `.figure` / `.figcap` markup and colour only through the `.svg-*` classes so it works in both themes (the template has a call-chain example and a two-lane example). Render-check figures (screenshot or `rsvg-convert`) for clipped labels and overlap, in light and dark and at 375px wide. If drawing the real thing shows the prose overclaims, fix the prose.
 
-## 5. Wrap-up
+## 5. Part 1 · The spec
 
-13. **Data stores and tools worth knowing:** only the niche commands and options this task uses (for example, `findOneAndUpdate` with a status filter, `bulkWrite`'s `matchedCount`, `$project` computed fields, `SET NX EX`).
-14. **Senior engineer tips:** the practice, where it applies, the trade-off.
-15. **Practice:** 4–6 questions grounded in this task's code.
-16. **Glossary.**
+Scope: only what the ticket asks for. Every plan step must serve a line in the ticket. Anything else you find goes in "Left out on purpose" or "Questions to settle", never in the plan. When unsure, leave it out and say so in chat. A good spec is short; four plan steps is normal.
 
-## 6. Answering follow-up questions about the spec
+1. The short version. Two or three paragraphs: what the change does, the gap in today's code with the file:line that causes it, and the one-sentence formula. Then a figure of the whole change (before vs after). Goals follow as a short bulleted list straight from the ticket.
+2. What changes in the data. One or two sentences: the change, or "nothing" plus the field that already exists (file:line). Say if API consumers will notice; flag anything breaking in an `.aside`.
+3. The plan. Numbered `h3` steps, one per function you edit (split a step that edits two). Each step:
+   - a short paragraph: the function, what triggers it (process plus cron/queue/route, file:line), what changes, and why in plain words;
+   - a call-chain figure if the path to this function isn't obvious;
+   - one code block of the real surrounding code with a `.codecap` of file:lines. Enough context to see where the edit sits, unrelated lines trimmed to `// …`, every changed or added line ending in `// new`. No separate before/after blocks;
+   - an optional `.aside` for a real gotcha, and a `.fixes` line saying what it fixes.
+4. How we'll know it works. A `.checklist` of observable results, a sentence on which fail today, and a one-line bug bash recipe.
+5. Watching it and backing out. One paragraph: what to watch after release, how to roll back.
+6. Questions to settle before coding. A short list, each with where (file:line) and who decides.
+7. Left out on purpose. A short list of follow-ups outside the ticket, each with file:line, plus any "why not just…?" alternatives that didn't fit naturally into the steps.
 
-- When the user asks what something in the spec means, answer from the code (file:line). Use the plain version first: the analogy, then the two or three facts that matter.
-- If answering turns up something the spec gets wrong or leaves out, say so, and offer to fold it into both Part 1's plan and Part 2's step. If it's outside the ticket, it goes in Follow-ups.
-- When asked to make the page plainer, follow the rewrite pass in `explainer-html` (back up first; rewrite prose only; keep facts, code, ids; list doubts instead of silently fixing them).
+## 6. Part 2 · The task, explained
 
-## 7. Save and publish
+Explainer style, scaled to the task: usually 3,000 to 8,000 words of prose, smallest idea first, a figure every few hundred words. Numbered `h2` movements continue Part 1's numbering.
 
-- Title: a 2–4 word name ("Wallet Lien Spec"). Put the one-sentence summary in `<meta name="description">`.
-- The template has no `<!doctype>`/`<html>`/`<head>`/`<body>` wrapper, because artifact hosts add it. For a standalone file opened locally, add the wrapper.
-- Save the file in the project's gitignored `docs/` if there is one. Otherwise ask, or use a scratch directory. If your tool can publish pages, publish there too, and re-publish to the same URL on every update.
-- If the page was published before, compare the live version with your local file before overwriting it, so edits made elsewhere aren't lost.
-- Record the path (and URL) wherever the project keeps notes, so later specs can link to it.
-- In the reply: the link or path, then a few short lines on what matters most, especially breaking API changes and open questions that block coding.
+1. The pieces you need. One movement per idea the task leans on, starting from ordinary life and ending at the real code. Only what this ticket needs; this is not the whole-system explainer.
+2. What's wrong today, and who it hurts. Walk through the failing case step by step with real values and a figure.
+3. The steps, one movement per Part 1 step (same numbers). Don't repeat Part 1's code block; build around it. Each movement answers, in prose, with file:line for every fact:
+   - how you get here: the chain from the real trigger to the function, with its figure;
+   - what you already have: the variables in scope, what each holds, where it was read, and any surprises (read before several awaits; one partition rather than the whole wallet);
+   - what happens next: who receives the result or reads what you wrote, and what they do with it today. Checking callers often turns up holes in the plan (a caller that ignores a new `stale` result). Fix the step in Part 1 and say so here;
+   - watch out for: real gotchas only.
+   End each movement with a short `.cheat` (gist bullets, and a snippet only if there's something copy-ready).
+4. How you'll know you're done, in plain words, matching Part 1's checklist.
+
+## 7. Wrap-up
+
+- Tools worth knowing, only for less common things this task uses (`findOneAndUpdate` with a status filter, `bulkWrite`'s `matchedCount`, `SET NX EX`): what it does, where it's used, why it beats the obvious option. Prose, not a table.
+- Senior engineer tips, only when a real one fits a real file. Leave the section out otherwise.
+- Practice: 4 to 6 questions grounded in this task's code, mixing multiple choice and "explain it back".
+- Glossary, one plain sentence per entry.
+
+## 8. Answering follow-up questions about the spec
+
+- When the user asks what something means, answer from the code (file:line) in two or three plain sentences, starting from an everyday picture, and offer to fold it into the page.
+- If answering turns up something the spec gets wrong, say so and fix both Part 1's step and Part 2's movement. Outside the ticket, it goes in "Left out on purpose".
+- When asked to make the page plainer, follow the rewrite approach in `explainer-html`: back up first, rewrite prose only, keep facts, code and ids, and list doubts instead of silently fixing them.
+
+## 9. Visual style (already in template.html)
+
+Identical to `explainer-html`: Newsreader for headings and the dek, Instrument Sans 15px body at about 1.75 line height, Geist Mono for code, paths and figure labels; headings never above 17px; one ~66ch column; dark-first neutral palette with a light variant; saturated accents (`--c-purple`, `--c-teal`, `--c-orange`, `--c-pink`, `--c-blue`) for figures only; highlight.js 11.9.0 from cdnjs. `// new` markers on changed lines turn teal automatically. Page-specific figure CSS goes in a second `<style>` block using only the tokens.
+
+## 10. Save and publish
+
+- Title: a 2–4 word name ("Wallet Lien Spec"). The one-sentence summary goes in `<meta name="description">`.
+- The template has no `<!doctype>`/`<html>`/`<head>`/`<body>` wrapper, because artifact hosts add it. For a standalone local file, add the wrapper.
+- Save in the project's gitignored `docs/` if there is one; otherwise ask, or use the scratchpad. Publish with the Artifact tool when available, and republish to the same URL on every update. If it was published before, compare the live version with your local file first so edits made elsewhere aren't lost.
+- Record the path and URL wherever the project keeps notes.
+- In the reply: the link, then a few short lines on what matters most, especially breaking API changes and questions that block coding.
