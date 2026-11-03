@@ -62,7 +62,7 @@ Scope: only what the ticket asks for. Every plan step must serve a line in the t
 3. The plan. Numbered `h3` steps, one per function you edit (split a step that edits two). Each step:
    - a short paragraph: the function, what triggers it (process plus cron/queue/route, file:line), what changes, and why in plain words;
    - a call-chain figure if the path to this function isn't obvious;
-   - one code block of the real surrounding code with a `.codecap` of file:lines. Enough context to see where the edit sits, unrelated lines trimmed to `// …`, every changed or added line ending in `// new`. No separate before/after blocks;
+   - one code block of the real surrounding code with a `.codecap` of file:lines. Enough context to see where the edit sits, unrelated lines trimmed to `// …`, a `// new` comment on its own line directly above each changed or added line, or one `// new` above a whole run of new lines (a new file gets a single `// new` at the top). Never a trailing `// new` at the end of a line. No separate before/after blocks;
    - an optional `.aside` for a real gotcha, and a `.fixes` line saying what it fixes.
 4. How we'll know it works. A `.checklist` of observable results, a sentence on which fail today, and a one-line bug bash recipe.
 5. Watching it and backing out. One paragraph: what to watch after release, how to roll back.

@@ -286,8 +286,9 @@ td.num { font-family: var(--mono); font-size: 13px; white-space: nowrap; font-va
 <p class="codecap">path/to/file.ts:40-60</p>
 <pre><code class="language-typescript">const wallet = await Wallet.findOne({ merchantId });
 // …
-const free = getFreeBalance(wallet); // new
-if (total &gt; free) total = free;      // new</code></pre>
+// new
+const free = getFreeBalance(wallet);
+if (total &gt; free) total = free;</code></pre>
 <p class="fixes">REPLACE: what it fixes, in plain words.</p>
 
 <h2 id="works"><span class="secnum">4</span>How we'll know it works</h2>
